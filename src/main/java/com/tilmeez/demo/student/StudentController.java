@@ -20,7 +20,7 @@ public class StudentController {
                         "jamial@gmail.com",
                         Gender.FEMALE),
                 new Student(
-                        1L,
+                        2L,
                         "Alex",
                         "Alex@gmail.com",
                         Gender.MALE)
