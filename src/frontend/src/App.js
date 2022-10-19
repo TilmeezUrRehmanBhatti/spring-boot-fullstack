@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
-import {getAllStudents} from "./client";
-import {Avatar, Badge, Breadcrumb, Button, Empty, Layout, Menu, Popover, Spin, Table, Tag} from 'antd';
+import {deleteStudent, getAllStudents} from "./client";
+import {Avatar, Badge, Breadcrumb, Button, Empty, Layout, Menu, Popconfirm, Radio, Spin, Table, Tag} from 'antd';
 import {
     DesktopOutlined,
     FileOutlined,
@@ -12,9 +12,9 @@ import {
 } from '@ant-design/icons';
 
 
-
 import StudentDrawerForm from "./StudentDrawerForm";
 import './App.css';
+import {successNotification} from "./notification";
 
 const {Header, Content, Footer, Sider} = Layout;
 
@@ -44,13 +44,20 @@ const TheAvatar = ({name}) => {
     </Avatar>;
 };
 
-const columns = [
+const removeStudent = (studentId, callback) => {
+    deleteStudent(studentId).then(() => {
+        successNotification("Student deleted", `Student with id:${studentId} was deleted`);
+        callback();
+    });
+}
+
+const columns = fetchStudents => [
     {
-      title: '',
-      dataIndex: 'avatar',
+        title: '',
+        dataIndex: 'avatar',
         key: 'avatar',
         render: (text, student) =>
-            <TheAvatar name={student.name} />,
+            <TheAvatar name={student.name}/>,
     },
     {
         title: 'Id',
@@ -72,6 +79,23 @@ const columns = [
         dataIndex: 'gender',
         key: 'gender',
     },
+    {
+        title: 'Action',
+        key: 'actions',
+        render: (text, student) =>
+            <Radio.Group>
+                <Popconfirm
+                    placement='topRight'
+                    title={`Are you sure to delete ${student.name}`}
+                    onConfirm={() => removeStudent(student.id, fetchStudents)}
+                    okText='Yes'
+                    cancelText='No'
+                >
+                    <Radio.Button value="small">Delete</Radio.Button>
+                </Popconfirm>
+                <Radio.Button value="small">Edit</Radio.Button>
+            </Radio.Group>
+    }
 ];
 
 function getItem(label, key, icon, children) {
@@ -107,7 +131,6 @@ const antIcon = (
         spin
     />
 );
-
 
 
 function App() {
@@ -147,7 +170,7 @@ function App() {
 
             <Table
                 dataSource={students}
-                columns={columns}
+                columns={columns(fetchStudents)}
                 bordered
                 title={() =>
                     <>

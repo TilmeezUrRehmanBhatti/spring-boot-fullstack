@@ -23,3 +23,8 @@ export const addNewStudent = student =>
         body: JSON.stringify(student),
 
     });
+
+export const deleteStudent = studentId =>
+    fetch(`api/v1/students/${studentId}`, {
+        method: 'DELETE'
+    }).then(checkStatus);
