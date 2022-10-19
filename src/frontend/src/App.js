@@ -1,24 +1,57 @@
-import {useState, useEffect} from "react";
+import {useEffect, useState} from "react";
 import {getAllStudents} from "./client";
-import {
-    Breadcrumb, Empty,
-    Layout,
-    Menu, Spin,
-    Table
-} from 'antd';
+import {Avatar, Badge, Breadcrumb, Button, Empty, Layout, Menu, Popover, Spin, Table, Tag} from 'antd';
 import {
     DesktopOutlined,
     FileOutlined,
     LoadingOutlined,
     PieChartOutlined,
+    PlusOutlined,
     TeamOutlined,
     UserOutlined,
 } from '@ant-design/icons';
+
+
+
+import StudentDrawerForm from "./StudentDrawerForm";
 import './App.css';
 
-const { Header, Content, Footer, Sider } = Layout;
+const {Header, Content, Footer, Sider} = Layout;
+
+const TheAvatar = ({name}) => {
+    let trim = name.trim();
+    if (trim.length == 0) {
+        return <Avatar
+            icon={<UserOutlined/>}
+            style={{
+                backgroundColor: '#87d068',
+            }}/>
+    }
+    const split = trim.split(" ");
+    if (split.length == 1) {
+        return <Avatar style={{
+            color: '#f56a00',
+            backgroundColor: '#fde3cf',
+        }}>
+            {name.charAt(0)}
+        </Avatar>
+    }
+    return <Avatar style={{
+        color: '#f56a00',
+        backgroundColor: '#fde3cf',
+    }}>
+        {`${name.charAt(0)}${name.charAt(name.length - 1)}`}
+    </Avatar>;
+};
 
 const columns = [
+    {
+      title: '',
+      dataIndex: 'avatar',
+        key: 'avatar',
+        render: (text, student) =>
+            <TheAvatar name={student.name} />,
+    },
     {
         title: 'Id',
         dataIndex: 'id',
@@ -49,21 +82,22 @@ function getItem(label, key, icon, children) {
         label,
     };
 }
+
 const items = [
-    getItem('Option 1', '1', <PieChartOutlined />),
-    getItem('Option 2', '2', <DesktopOutlined />),
-    getItem('User', 'sub1', <UserOutlined />,
+    getItem('Option 1', '1', <PieChartOutlined/>),
+    getItem('Option 2', '2', <DesktopOutlined/>),
+    getItem('User', 'sub1', <UserOutlined/>,
         [
-        getItem('Tom', '3'),
-        getItem('Bill', '4'),
-        getItem('Alex', '5'),
-    ]),
-    getItem('Team', 'sub2', <TeamOutlined />,
+            getItem('Tom', '3'),
+            getItem('Bill', '4'),
+            getItem('Alex', '5'),
+        ]),
+    getItem('Team', 'sub2', <TeamOutlined/>,
         [
             getItem('Team 1', '6'),
             getItem('Team 2', '8')
         ]),
-    getItem('Files', '9', <FileOutlined />),
+    getItem('Files', '9', <FileOutlined/>),
 ];
 const antIcon = (
     <LoadingOutlined
@@ -79,9 +113,9 @@ const antIcon = (
 function App() {
 
     const [students, setStudents] = useState([]);
-    const [collapsed, setCollapsed] = useState(false);
+    const [collapsed, setCollapsed] = useState(true);
     const [fetching, setFetching] = useState(true);
-
+    const [showDrawer, setShowDrawer] = useState(false);
 
     const fetchStudents = () =>
         getAllStudents()
@@ -99,20 +133,41 @@ function App() {
 
     const renderStudents = () => {
         if (fetching) {
-            return  <Spin indicator={antIcon} />
+            return <Spin indicator={antIcon}/>
         }
         if (students.length <= 0) {
-            return <Empty />;
+            return <Empty/>;
         }
-        return <Table
-            dataSource={students}
-            columns={columns}
-            bordered
-            title={() => 'Students'}
-            pagination={{pageSize: 50}}
-            scroll={{y: 400}}
-            rowKey={(student) =>student.id}
-        />;
+        return <>
+            <StudentDrawerForm
+                showDrawer={showDrawer}
+                setShowDrawer={setShowDrawer}
+                fetchStudents={fetchStudents}
+            />
+
+            <Table
+                dataSource={students}
+                columns={columns}
+                bordered
+                title={() =>
+                    <>
+                        <Tag>Number of students</Tag>
+                        <Badge count={students.length}
+                               className="site-badge-count-4"
+                        />
+                        <br/><br/>
+                        <Button
+                            onClick={() => setShowDrawer(!showDrawer)}
+                            type="primary" shape="round" icon={<PlusOutlined/>} size="middle">
+                            Add New Student
+                        </Button>
+                    </>
+                }
+                pagination={{pageSize: 50}}
+                scroll={{y: 400}}
+                rowKey={(student) => student.id}
+            />;
+        </>;
 
     }
 
@@ -166,43 +221,23 @@ function App() {
         </Layout>
     </Layout>;
 
-    return <Layout style={{ minHeight: '100vh' }}>
+    return <Layout style={{minHeight: '100vh'}}>
         <Sider collapsible collapsed={collapsed}
                onCollapse={setCollapsed}>
-            <div className="logo" />
-            <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
-                <Menu.Item key="1" icon={<PieChartOutlined />}>
-                    Option 1
-                </Menu.Item>
-                <Menu.Item key="2" icon={<DesktopOutlined />}>
-                    Option 2
-                </Menu.Item>
-                <SubMenu key="sub1" icon={<UserOutlined />} title="User">
-                    <Menu.Item key="3">Tom</Menu.Item>
-                    <Menu.Item key="4">Bill</Menu.Item>
-                    <Menu.Item key="5">Alex</Menu.Item>
-                </SubMenu>
-                <SubMenu key="sub2" icon={<TeamOutlined />} title="Team">
-                    <Menu.Item key="6">Team 1</Menu.Item>
-                    <Menu.Item key="8">Team 2</Menu.Item>
-                </SubMenu>
-                <Menu.Item key="9" icon={<FileOutlined />}>
-                    Files
-                </Menu.Item>
-            </Menu>
+            <div className="logo"/>
         </Sider>
         <Layout className="site-layout">
-            <Header className="site-layout-background" style={{ padding: 0 }} />
-            <Content style={{ margin: '0 16px' }}>
-                <Breadcrumb style={{ margin: '16px 0' }}>
+            <Header className="site-layout-background" style={{padding: 0}}/>
+            <Content style={{margin: '0 16px'}}>
+                <Breadcrumb style={{margin: '16px 0'}}>
                     <Breadcrumb.Item>User</Breadcrumb.Item>
                     <Breadcrumb.Item>Bill</Breadcrumb.Item>
                 </Breadcrumb>
-                <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
+                <div className="site-layout-background" style={{padding: 24, minHeight: 360}}>
                     Bill is a cat.
                 </div>
             </Content>
-            <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
+            <Footer style={{textAlign: 'center'}}>Ant Design ©2018 Created by Ant UED</Footer>
         </Layout>
     </Layout>
 }
