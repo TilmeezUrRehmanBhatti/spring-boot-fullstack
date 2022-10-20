@@ -14,7 +14,7 @@ import {
 
 import StudentDrawerForm from "./StudentDrawerForm";
 import './App.css';
-import {successNotification} from "./notification";
+import {errorNotification, successNotification} from "./notification";
 
 const {Header, Content, Footer, Sider} = Layout;
 
@@ -146,8 +146,18 @@ function App() {
             .then(data => {
                 console.log(data);
                 setStudents(data);
-                setFetching(false);
-            })
+            }).catch(err => {
+            console.log(err.response)
+            err.response.json().then(res => {
+                console.log(res);
+                errorNotification(
+                    "There was an issue",
+                    `${res.message} [statusCode:${res.status}] [${res.error}]`
+                )
+            });
+        }).finally(() =>
+            setFetching(false)
+        );
 
     useEffect(() => {
         console.log("component is mounted");

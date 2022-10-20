@@ -44,7 +44,7 @@ function StudentDrawerForm({showDrawer, setShowDrawer,fetchStudents}) {
         title="Create new student"
         width={720}
         onClose={onCLose}
-        visible={showDrawer}
+        open={showDrawer}
         bodyStyle={{paddingBottom: 80}}
         footer={
             <div
