@@ -45,9 +45,18 @@ const TheAvatar = ({name}) => {
 };
 
 const removeStudent = (studentId, callback) => {
-    deleteStudent(studentId).then(() => {
+    deleteStudent(studentId)
+        .then(() => {
         successNotification("Student deleted", `Student with id:${studentId} was deleted`);
         callback();
+    }).catch(err => {
+        err.response.json().then(res => {
+            console.log(res);
+            errorNotification(
+                "There was an issue",
+                `${res.message} [statusCode:${res.status}] [${res.error}]`
+            )
+        });
     });
 }
 
@@ -169,7 +178,19 @@ function App() {
             return <Spin indicator={antIcon}/>
         }
         if (students.length <= 0) {
-            return <Empty/>;
+            return <>
+                <Button
+                    onClick={() =>setShowDrawer(!showDrawer)}
+                    type="primary" shape="round" icon={<PlusOutlined/>} size="small">
+                    Add New Student
+                </Button>
+                <StudentDrawerForm
+                    showDrawer={showDrawer}
+                    setShowDrawer={setShowDrawer}
+                    fetchStudents={fetchStudents}
+                    />
+                <Empty/>
+                </>
         }
         return <>
             <StudentDrawerForm
@@ -253,26 +274,6 @@ function App() {
             </Footer>
         </Layout>
     </Layout>;
-
-    return <Layout style={{minHeight: '100vh'}}>
-        <Sider collapsible collapsed={collapsed}
-               onCollapse={setCollapsed}>
-            <div className="logo"/>
-        </Sider>
-        <Layout className="site-layout">
-            <Header className="site-layout-background" style={{padding: 0}}/>
-            <Content style={{margin: '0 16px'}}>
-                <Breadcrumb style={{margin: '16px 0'}}>
-                    <Breadcrumb.Item>User</Breadcrumb.Item>
-                    <Breadcrumb.Item>Bill</Breadcrumb.Item>
-                </Breadcrumb>
-                <div className="site-layout-background" style={{padding: 24, minHeight: 360}}>
-                    Bill is a cat.
-                </div>
-            </Content>
-            <Footer style={{textAlign: 'center'}}>Ant Design ©2018 Created by Ant UED</Footer>
-        </Layout>
-    </Layout>
 }
 
 export default App;
