@@ -9,7 +9,7 @@ class DemoApplicationTests {
 
     @Test
     void contextLoads() {
-        Assertions.fail("Opps failed !!!");
+//        Assertions.fail("Opps failed !!!");
     }
 
 }
