@@ -20,7 +20,7 @@ const {Header, Content, Footer, Sider} = Layout;
 
 const TheAvatar = ({name}) => {
     let trim = name.trim();
-    if (trim.length == 0) {
+    if (trim.length === 0) {
         return <Avatar
             icon={<UserOutlined/>}
             style={{
@@ -28,7 +28,7 @@ const TheAvatar = ({name}) => {
             }}/>
     }
     const split = trim.split(" ");
-    if (split.length == 1) {
+    if (split.length === 1) {
         return <Avatar style={{
             color: '#f56a00',
             backgroundColor: '#fde3cf',
