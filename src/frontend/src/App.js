@@ -1,6 +1,21 @@
 import {useEffect, useState} from "react";
 import {deleteStudent, getAllStudents} from "./client";
-import {Avatar, Badge, Breadcrumb, Button, Empty, Image, Layout, Menu, Popconfirm, Radio, Spin, Table, Tag} from 'antd';
+import {
+    Avatar,
+    Badge,
+    Breadcrumb,
+    Button,
+    Divider,
+    Empty,
+    Image,
+    Layout,
+    Menu,
+    Popconfirm,
+    Radio,
+    Spin,
+    Table,
+    Tag
+} from 'antd';
 import {
     DesktopOutlined,
     FileOutlined,
@@ -275,6 +290,13 @@ function App() {
                     src="https://user-images.githubusercontent.com/80107049/198160518-9a4f90a2-5262-4d80-971c-5f7c72e83ff2.png"
                 />
             </Footer>
+            <Divider>
+                <a
+                    target="_blank"
+                    href="https://github.com/TilmeezUrRehmanBhatti">
+                    Click here to access github
+                </a>
+            </Divider>
         </Layout>
     </Layout>;
 }
