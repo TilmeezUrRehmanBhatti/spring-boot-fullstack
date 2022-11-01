@@ -23,7 +23,7 @@ public class StudentService {
                 .selectExistsEmail(student.getEmail());
         if (existsEmail) {
             throw new BadRequestException(
-                    "Email " + student.getEmail() + " is taken");
+                        "Email " + student.getEmail() + " is taken");
         }
         studentRepository.save(student);
     }
